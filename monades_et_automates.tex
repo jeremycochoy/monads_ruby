@@ -41,6 +41,7 @@
 
 \section{Monades}
 
+\subsection{Types}
 \begin{frame}
 \frametitle{Les types}
 \begin{block}{Qu'est-ce qu'un type?}
@@ -80,39 +81,40 @@ C'est un \emph{ensemble} de valeurs.
 Just, Nothing, InABox etc portent le doux nom de \emph{constructeur de type}. C'est aussi le cas de \emph{[]}.
 \end{frame}
 
-
-
+\subsection{Fonctions}
 \begin{frame}
-\frametitle{Les types : Les fonctions}
-\begin{block}{Une fonction a aussi un type :}
-\begin{itemize}
-\item square  :: Float -> Float
-\item floor   :: Float -> Int
-\item showInt :: Int -> String
-\item (+)     :: Int -> Int -> Int
-\item id      :: a -> a
-\end{itemize}
+\frametitle{Les fonctions}
+\begin{block}{}
+Ce sont les traitements que l'on peux implémenter.
 \end{block}
-
+\begin{center}
+\includegraphics[scale=0.2]{fct.png}
+\end{center}
+\pause
+\begin{block}{}
+Une fonction ne lance pas de fusé.
+\end{block}
 \end{frame}
-
 
 
 \begin{frame}
 \frametitle{Les fonctions}
-\begin{block}{Une fonction a aussi un type :}
+\begin{block}{Une fonction a aussi un type : \emph{a -> b}}
 \begin{itemize}
-\item Une fonction a un type de la forme \emph{a -> b}
-\item (+) :: (Int) -> (Int -> Int)
-\item (5+):: Int -> Int
+\item floor   :: Float -> Int
+\item (+2):: Int -> Int
+\pause
+\item id      :: a -> a
 \item map :: (a -> b) -> [a] -> [b]
 \end{itemize}
 \end{block}
+
 \end{frame}
+
 
 \begin{frame}
 \frametitle{Les fonctions}
-\begin{block}{Ca se compose}
+\begin{block}{Ça se compose}
 \begin{itemize}
 \item f1 :: a -> b
 \item f2 :: b -> c
@@ -125,6 +127,55 @@ Just, Nothing, InABox etc portent le doux nom de \emph{constructeur de type}. C'
 
 Pour l’anecdote, la collection de tous les types forme une catégorie où les flèches sont les fonctions implémentables. On l’appelle la catégorie des types.
 
+\end{frame}
+
+\subsection{Foncteurs}
+
+\begin{frame}
+\frametitle{Donnée dans un contexte}
+
+\begin{block}{}
+Un foncteur place une valeur dans un contexte.
+\end{block}
+
+\begin{center}
+\includegraphics[scale=0.3]{just3.png}
+\end{center}
+
+\begin{exampleblock}{}
+L'exemple de Maybe : \verb!Just 3!
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}
+\frametitle{Donnée dans un contexte}
+
+\begin{block}{}
+Un contexte peux aussi ne pas contenir de valeur.
+\end{block}
+
+\begin{center}
+\includegraphics[scale=0.3]{nothing.png}
+\end{center}
+\begin{exampleblock}{}
+L'exemple de Maybe : \verb!Nothing!
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}
+\frametitle{Functorial mapping}
+On ne peux plus appliquer la fonction telle quelle.
+\begin{center}
+\includegraphics[scale=0.3]{wrong_type.png}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Functorial mapping}
+Mais le foncteur nous donne une nouvelle flèche.
+\begin{center}
+\includegraphics[scale=0.19]{f_fct.png}
+\end{center}
 \end{frame}
 
 
@@ -152,13 +203,15 @@ Pour l’anecdote, la collection de tous les types forme une catégorie où les 
 
 \begin{exampleblock}{}
 \begin{itemize}
-\item fmap square :: F Float -> F Float
+\item fmap (+2) :: F Int -> F Int
 \item fmap id :: F a -> F a
 \end{itemize}
 \end{exampleblock}
 \end{frame}
 
+
 \begin{frame}
+\frametitle{Dura lex sed lex}
 \begin{alertblock}{Un foncteur doit respecter des lois}
 \begin{itemize}
 \item fmap id = id
@@ -172,13 +225,16 @@ Un foncteur est un endofoncteur de la catégorie des types.
 \end{frame}
 
 
-\begin{frame}
-\frametitle{Donnée dans un contexte}
-\end{frame}
-
 
 \begin{frame}
 \frametitle{Un traitement qui peux échouer}
+
+\begin{center}
+\includegraphics[scale=0.5]{failure.png}
+\end{center}
+\begin{exampleblock}{}
+Une fonction de type \emph{Int -> Maybe Int}.
+\end{exampleblock}
 \end{frame}
 
 \begin{frame}
