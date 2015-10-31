@@ -3,8 +3,9 @@
 \usepackage[frenchb]{babel}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usetheme{Warsaw}
 
+\usetheme{Warsaw}
+\useoutertheme{infolines}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -85,7 +86,7 @@ Just, Nothing, InABox etc portent le doux nom de \emph{constructeur de type}. C'
 \begin{frame}
 \frametitle{Les fonctions}
 \begin{block}{}
-Ce sont les traitements que l'on peux implémenter.
+Ce sont les traitements que l'on peut implémenter.
 \end{block}
 \begin{center}
 \includegraphics[scale=0.2]{fct.png}
@@ -125,58 +126,11 @@ Une fonction ne lance pas de fusé.
 \end{block}
 \pause
 
-Pour l’anecdote, la collection de tous les types forme une catégorie où les flèches sont les fonctions implémentables. On l’appelle la catégorie des types.
+La collection de tous les types forme une catégorie. Les flèches sont les fonctions implémentables. On l’appelle la catégorie des types.
 
 \end{frame}
 
 \subsection{Foncteurs}
-
-\begin{frame}
-\frametitle{Donnée dans un contexte}
-
-\begin{block}{}
-Un foncteur place une valeur dans un contexte.
-\end{block}
-
-\begin{center}
-\includegraphics[scale=0.3]{just3.png}
-\end{center}
-
-\begin{exampleblock}{}
-L'exemple de Maybe : \verb!Just 3!
-\end{exampleblock}
-\end{frame}
-
-\begin{frame}
-\frametitle{Donnée dans un contexte}
-
-\begin{block}{}
-Un contexte peux aussi ne pas contenir de valeur.
-\end{block}
-
-\begin{center}
-\includegraphics[scale=0.3]{nothing.png}
-\end{center}
-\begin{exampleblock}{}
-L'exemple de Maybe : \verb!Nothing!
-\end{exampleblock}
-\end{frame}
-
-\begin{frame}
-\frametitle{Functorial mapping}
-On ne peux plus appliquer la fonction telle quelle.
-\begin{center}
-\includegraphics[scale=0.3]{wrong_type.png}
-\end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{Functorial mapping}
-Mais le foncteur nous donne une nouvelle flèche.
-\begin{center}
-\includegraphics[scale=0.19]{f_fct.png}
-\end{center}
-\end{frame}
 
 
 \begin{frame}
@@ -209,6 +163,38 @@ Mais le foncteur nous donne une nouvelle flèche.
 \end{exampleblock}
 \end{frame}
 
+\begin{frame}
+\frametitle{Donnée dans un contexte}
+
+\begin{block}{}
+Un foncteur permet de passer d'un monde (les types a) vers un autre (les types F a).
+\end{block}
+
+\begin{center}
+\includegraphics[scale=0.3]{just3.png}
+\end{center}
+TODO : Remplacer l'image par a -> F a
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Functorial mapping}
+On ne peut plus appliquer la fonction telle quelle les diagrammes suivant commutent :
+
+\begin{center}
+\includegraphics[scale=0.3]{wrong_type.png}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Functorial mapping}
+Mais le foncteur nous donne une nouvelle flèche.
+\begin{center}
+\includegraphics[scale=0.19]{f_fct.png}
+\end{center}
+\end{frame}
+
+
 
 \begin{frame}
 \frametitle{Dura lex sed lex}
@@ -224,10 +210,67 @@ Mais le foncteur nous donne une nouvelle flèche.
 Un foncteur est un endofoncteur de la catégorie des types.
 \end{frame}
 
+\subsection{Monades}
+
+\begin{frame}
+
+\begin{center}\textbf Monades\end{center}
+
+TODO : Funny picture here.
+\end{frame}
+
+\begin{frame}
+\frametitle{Donnée dans un contexte}
+
+\begin{block}{}
+Une monade place une valeur dans un contexte.
+\end{block}
+
+\begin{center}
+\includegraphics[scale=0.3]{just3.png}
+\end{center}
+
+\begin{exampleblock}{}
+L'exemple de Maybe : \verb!Just 3!
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}
+\frametitle{Donnée dans un contexte}
+
+\begin{block}{}
+Un contexte peut aussi ne pas contenir de valeur.
+\end{block}
+
+\begin{center}
+\includegraphics[scale=0.3]{nothing.png}
+\end{center}
+\begin{exampleblock}{}
+L'exemple de Maybe : \verb!Nothing!
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}
+\frametitle{Placer une donnée dans un contexte}
+
+\begin{block}{L'opérateur \emph{pure}}
+\begin{center}
+\verb!pure :: a -> F a!
+\end{center}
+\end{block}
+
+\begin{exampleblock}{Quelques cas particuliers}
+	\begin{itemize}
+		\item Just
+		\item (: [])
+		\item Right
+	\end{itemize}
+\end{exampleblock}
+\end{frame}
 
 
 \begin{frame}
-\frametitle{Un traitement qui peux échouer}
+\frametitle{Un traitement qui peut échouer}
 
 \begin{center}
 \includegraphics[scale=0.5]{failure.png}
@@ -238,26 +281,112 @@ Une fonction de type \emph{Int -> Maybe Int}.
 \end{frame}
 
 \begin{frame}
-\frametitle{Combiner des traitements avec échec}
-\end{frame}
+\frametitle{Composer des traitements avec échec}
+\begin{block}{}
+Comment composer \verb!f :: a -> M b! et \verb!g :: b -> M c! ?
+\end{block}
+\pause
+\begin{block}{}
+Si $M$ est un foncteur, on peut composer
+\verb!f :: a -> M b! avec \verb!fmap g :: M b -> M (M c)!.
+\end{block}
+\pause
+\begin{block}{}
+Que faire d'un \verb!M (M c)!?
+\end{block}
 
-\begin{frame}
-\frametitle{L'opérateur bind}
 \end{frame}
-
 
 \begin{frame}
 \frametitle{L'opérateur join}
+\begin{block}{}
+\begin{center}
+\verb!join :: M (M a) -> M a!
+\end{center}
+\end{block}
+
+\begin{center}
 \includegraphics[scale=0.2]{join.png}
+\end{center}
+\pause
+\begin{exampleblock}{}
+\begin{center}
+\verb!join \$ Just (Just 3)!.
+\end{center}
+\end{exampleblock}
 \end{frame}
+
 
 \begin{frame}
 \frametitle{L'opérateur join}
+\begin{block}{}
+\begin{center}
+\verb!join :: M (M a) -> M a!
+\end{center}
+\end{block}
+\medskip
+\begin{center}
 \includegraphics[scale=0.2]{join_nothing.png}
+\end{center}
+\medskip
+\pause
+\begin{exampleblock}{}
+\begin{center}
+\verb!join \$ Just (Nothing)!.
+\end{center}
+\end{exampleblock}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{L'opérateur \emph{bind}}
+\begin{block}{On cherche à définir la composition.}
+\verb!(>=>) :: (a -> M b) -> (b -> M c) -> (a -> M c)!
+\end{block}
+
+\pause
+
+\begin{block}{Nous avons :}
+\begin{itemize}
+\item \verb!(fmap g) . f :: a -> M (M c)!
+\item \verb!join :: M (M a) -> M a!
+\end{itemize}
+\end{block}
+\pause
+
+\begin{block}{On peut maintenant composer $f$ et $g$.}
+
+\verb!f >=> g $\equiv$ join . (fmap g) . f!.
+\end{block}
 \end{frame}
 
 \begin{frame}
-\frametitle{Monade}
+\frametitle{Récapitulatif}
+
+\begin{block}{Une monade, c'est}
+
+	\begin{itemize}
+		\item fmap :: (a -> b) -> (M a -> M b)
+		\item pure :: a -> M a
+		\item join :: M (M a) -> M a
+	\end{itemize}
+
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Dura lex sed lex}
+\begin{alertblock}{Une monade doit respecter des lois}
+\begin{itemize}
+\item \verb!pure . f $\equiv$ (fmap f) . pure!
+\item \verb!join . fmap (fmap f) $\equiv$ (fmap f) . join!
+\item[] \ 
+\item \verb!join . fmap join   $\equiv$ join . join!
+\item \verb!join . fmap pure   $\equiv$ join . pure = id!
+\end{itemize}
+\end{alertblock}
 \end{frame}
 
 \begin{frame}
@@ -267,33 +396,345 @@ endofoncteur $T : C \rightarrow C$ et de deux
 transformations naturelles $\mu : T\circ T \rightarrow T$ et $\eta : 1_C \rightarrow T$ telles que :
 
 \[
+\begin{array}{cc}
+\xymatrix{
+T(T(T(X))) \ar[r]^{T(\mu_X)} \ar[d]_{\mu_{T(X)}} & T(T(X)) \ar[d]^{\mu_X} \\
+T(T(X)) \ar[r]_{\mu_X} & T(X) \\
+}
+&
+\xymatrix{
+T(X) \ar[r]^{\eta_{T(X)}} \ar[d]_{T(\eta_X)}  \ar@{=}[dr] & T(T(X)) \ar[d]^{\mu_X} \\
+T(T(X)) \ar[r]_{\mu_X} & T(X) \\
+}
+\end{array}
+\]
+c'est à dire
+$\mu \circ T\mu = \mu \circ \mu_T$
+et
+$\mu \circ T \eta = \mu \circ \eta_T = id_T$.
+
+\pause
+
+Dans notre cas, $C$ est la catégorie des types.
+\end{frame}
+
+\begin{frame}
+\frametitle{A chaque loi son diagramme}
+\begin{alertblock}{\verb!pure! est une T.N.}
+\verb!pure . f $\equiv$ (fmap f) . pure!
+\end{alertblock}
+
+\begin{block}{}
+\[
+\xymatrix{
+X \ar[r]^{f} \ar[d]_{\eta_X} & Y \ar[d]^{\eta_Y} \\
+T(X) \ar[r]_{T(f)} & T(Y) \\
+}
+\]
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{A chaque loi son diagramme}
+\begin{alertblock}{\verb!join! est une T.N.}
+\verb!join . fmap (fmap f) $\equiv$ (fmap f) . join!
+\end{alertblock}
+
+\begin{block}{}
+\[
+\xymatrix{
+T(T(X)) \ar[r]^{T(T(f))} \ar[d]_{\mu_{X}} & T(T(Y)) \ar[d]^{\mu_{Y}} \\
+T(X) \ar[r]_{T(f)} & T(Y) \\
+}
+\]
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{A chaque loi son diagramme}
+\begin{alertblock}{Associativité}
+\verb!join . fmap join   $\equiv$ join . join!
+\end{alertblock}
+
+\begin{block}{}
+
+\[
 \xymatrix{
 T(T(T(X))) \ar[r]^{T(\mu_X)} \ar[d]_{\mu_{T(X)}} & T(T(X)) \ar[d]^{\mu_X} \\
 T(T(X)) \ar[r]_{\mu_X} & T(X) \\
 }
 \]
+\end{block}
+
+\begin{block}{}
+\begin{center}
+$\mu \circ T\mu = \mu \circ \mu_T$
+\end{center}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{A chaque loi son diagramme}
+\begin{alertblock}{Existence d'un neutre}
+\verb!join . fmap pure   $\equiv$ join . pure = id!
+\end{alertblock}
+
+\begin{block}{}
 \[
 \xymatrix{
 T(X) \ar[r]^{\eta_{T(X)}} \ar[d]_{T(\eta_X)}  \ar@{=}[dr] & T(T(X)) \ar[d]^{\mu_X} \\
 T(T(X)) \ar[r]_{\mu_X} & T(X) \\
 }
 \]
-c'est à dire
-$\mu \circ T\mu = \mu \circ \mu T$
-et
-$\mu \circ T \eta = \mu \circ \eta T = 1_T$.
+\end{block}
 
-\pause
+\begin{block}{}
+\begin{center}
+$\mu \circ T \eta = \mu \circ \eta_T = id_T$
+\end{center}
+\end{block}
 
-Dans notre cas, $C$ est la catégorie des types ; les objet sont les ensembles de valeurs que peuvent prendre une fonction ($Int = {-32768 , \dots, 32767}$), et les flèches sont les fonctions ($f :: Int -> Int$).
 \end{frame}
+
 
 \section{Automates Cellulaires}
 \begin{frame}
+\begin{center}
+\textbf{Automates cellulaires}
+\end{center}
+
+\begin{center}
+%\includegraphics[scale=0.5]{automata_flip.png}
+\includegraphics[scale=0.16]{textile_cone.jpg}
+\end{center}
+
+\begin{center}Toison d'or\end{center}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Qu'est-ce qu'un automate cellulaire?}
+\begin{block}{Un automate cellulaire, c'est :}
+	\begin{itemize}
+		\item Un nombre fini d'états $S$,
+		\item Une grille de cellules,
+		\item La notion de voisinage d'une cellule $V_c$,
+		\item D'une fonction de transition qui à une cellule associe sont nouvelle état.
+	\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{Combien d'automates cellulaires différents?}
+\begin{block}{On a le choix :}
+	\begin{itemize}
+	\item De la dimension de la grille,
+	\item Des lois,
+	\item Du nombres d'états (couleurs),
+	\item De la forme du voisinages (boules de rayon r, etc.),
+	\item De ne pas être déterministe.
+	\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}
+\frametitle{The "Game of Life"}
+\begin{center}
+\textbf{Jeu de la vie} (J. H. Conway)
+\end{center}
+\begin{center}
+\includegraphics[scale=0.5]{game_of_life.png}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Étude d'un cas : Rule 30}
+\begin{center}
+\textbf{Rule 30}
+\end{center}
+\begin{center}
+\includegraphics[scale=1]{rule30.png}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{La grille}
+\begin{block}{La grille de l'automate}
+\begin{center}
+\includegraphics[scale=0.5]{grid.png}
+\end{center}
+\end{block}
+\begin{itemize}
+	\item Une grille 1D
+	\item Deux états (Blanc / Noir)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{block}{}
+	Un voisinage de 3 cellules.
+\end{block}
+\pause
+\begin{block}{Les règles}
+	\begin{center}
+	\includegraphics[scale=1]{rule30_rule.png}
+	\end{center}
+\end{block}
+\pause
+\begin{block}{On peux aussi écrire :}
+	\begin{center}
+	\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+	\hline
+	Ancien état & 111 & 110 & 101 & 100 & 011 & 010 & 001 & 000 \\
+	\hline
+	Nouvel état	& 0   & 0   & 0   & 1   & 1   & 1   & 1   & 0 \\
+	\hline
+	\end{tabular}
+	\end{center}
+\end{block}
 \end{frame}
 
 \section{Comonades}
+
 \begin{frame}
+Comonades
+
+TODO : Funny comonad picture
 \end{frame}
+
+\begin{frame}
+\frametitle{C'est le dual d'une monade}
+
+\begin{itemize}
+\item extract (copure) (co uinit) :: M a -> a
+\item duplicate (cojoin) (co product $\delta$) :: M a -> M (M a)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Dura lex sed lex}
+\begin{alertblock}{Une comonade doit respecter des lois}
+\begin{itemize}
+\item \verb!(fmap (fmap f)) . duplicate $\equiv$ duplicate . fmap f!
+\item \verb!duplicate . duplicate = fmap duplicate . duplicate!
+\item[] \ 
+\item \verb!duplicate . duplicate $\equiv$ fmap duplicate . duplicate! (commut)
+\item \verb!fmap extract . duplicate $\equiv$ extract . duplicate $\equiv$ id! (co unit)
+\end{itemize}
+\end{alertblock}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Comonades - Catégories}
+Une comonade $(T, \delta, \epsilon)$ est la donné d'un
+endofoncteur $T : C \rightarrow C$ et de deux
+transformations naturelles $\Delta : T \rightarrow T\circ T$ et $\epsilon : T \rightarrow 1_C$ telles que :
+
+\[
+\begin{array}{cc}
+\xymatrix{
+T(X) \ar[r]^{\Delta_X} \ar[d]_{\Delta_X} & T(T(X)) \ar[d]^{\Delta_{T(X)}} \\
+T(T(X)) \ar[r]_{T(\Delta_X)} & T(T(T(X))) \\
+}
+&
+\xymatrix{
+T(X) \ar[d]_{\Delta_X} \ar[r]^{\Delta_X}  \ar@{=}[dr] & T(T(X))   \ar[d]^{\epsilon_{T(X)}} \\
+T(T(X)) \ar[r]_{T(\epsilon_X)} & T(X) \\
+}
+\end{array}
+\]
+c'est à dire
+$\Delta_T \circ \Delta = T \Delta \circ \Delta$
+et
+$T \epsilon \circ \Delta = \epsilon_T \circ \Delta = id$.
+\end{frame}
+
+\begin{frame}
+\frametitle{A chaque loi son diagramme}
+\begin{alertblock}{\verb!extract! est une T.N.}
+\verb!f . extract $\equiv$ extract . (fmap f)!
+\end{alertblock}
+
+\begin{block}{}
+\[
+\xymatrix{
+X \ar[r]^{f} & Y  \\
+T(X) \ar[r]_{T(f)} \ar[u]_{\epsilon_X} & T(Y) \ar[u]^{\epsilon_Y}\\
+}
+\]
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{A chaque loi son diagramme}
+\begin{alertblock}{\verb!duplicate! est une T.N.}
+\verb!(fmap (fmap f)) . duplicate $\equiv$ duplicate . fmap f!
+\end{alertblock}
+
+\begin{block}{}
+\[
+\xymatrix{
+T(X) \ar[r]_{T(f)} \ar[d]_{\Delta_{X}} & T(Y) \ar[d]^{\Delta_{Y}} \\
+T(T(X)) \ar[r]^{T(T(f))} & T(T(Y)) \\
+}
+\]
+\end{block}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{A chaque loi son diagramme}
+\begin{alertblock}{Coassociativité}
+\verb!duplicate . duplicate = fmap duplicate . duplicate!
+\end{alertblock}
+
+\begin{block}{}
+
+\[
+\xymatrix{
+T(X) \ar[r]^{\Delta_X} \ar[d]_{\Delta_X} & T(T(X)) \ar[d]^{\Delta_{T(X)}} \\
+T(T(X)) \ar[r]_{T(\Delta_X)} & T(T(T(X))) \\
+}
+\]
+\end{block}
+
+\begin{block}{}
+\begin{center}
+$\Delta_T \circ \Delta = T\Delta \circ \Delta$
+\end{center}
+\end{block}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{A chaque loi son diagramme}
+\begin{alertblock}{Existence d'une counité}
+\verb!extract . duplicate = fmap extract . duplicate = id!
+\end{alertblock}
+
+\begin{block}{}
+\[
+\xymatrix{
+T(X) \ar[d]_{\Delta_X} \ar[r]^{\Delta_X}  \ar@{=}[dr] & T(T(X))   \ar[d]^{\epsilon_{T(X)}} \\
+T(T(X)) \ar[r]_{T(\epsilon_X)} & T(X) \\
+}
+\]
+\end{block}
+
+\begin{block}{}
+\begin{center}
+$\epsilon_T \circ \Delta = T \epsilon \circ \Delta = id_T$
+\end{center}
+\end{block}
+
+\end{frame}
+
 
 \end{document}
