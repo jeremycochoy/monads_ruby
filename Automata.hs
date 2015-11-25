@@ -109,5 +109,5 @@ showLife w h r u = mapM putStrLn view >> return ()
     view = take h . fmap (showUniverse (w `div` 2)) $ list_states
     list_states = iterate (next r) u
 
-{- Example : showLife 50 10 duo_universe rule_lr -}
+{- Example : showLife 50 10 rule_lr duo_universe -}
 {-           showLife 90 400 rule_30 single_universe -}
