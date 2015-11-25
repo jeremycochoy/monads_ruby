@@ -31,7 +31,7 @@ instance Functor Universe where
 
 {- Construit un univers de tous les univers translaté -}
 duplicate :: Universe a -> Universe (Universe a)
-duplicate u = Universe (tail $ iterate left u ) u (tail $ iterate left u)
+duplicate u = Universe (tail $ iterate left u ) u (tail $ iterate right u)
 
 {---------------
  - CONVOLUTION -
