@@ -545,7 +545,12 @@ TODO : COMMIT TEXTILE CONE
 \begin{frame}
 \frametitle{The "Game of Life"}
 \begin{center}
-\textbf{Jeu de la vie} (J. H. Conway)
+\
+
+
+
+
+{Jeu de la vie} (J. H. Conway)
 \end{center}
 \begin{center}
 \includegraphics[scale=0.5]{game_of_life.png}
@@ -603,7 +608,7 @@ TODO : COMMIT TEXTILE CONE
 
 \begin{frame}
 \begin{center}
-\textbf Comonades
+\textbf{Comonades}
 \end{center}
 
 \begin{center}
@@ -615,6 +620,7 @@ TODO : COMMIT TEXTILE CONE
 \frametitle{C'est le dual d'une monade}
 
 \begin{itemize}
+\item C'est un foncteur M
 \item extract (copure) (co uinit) :: M a -> a
 \item duplicate (cojoin) (co product $\delta$) :: M a -> M (M a)
 \end{itemize}
@@ -744,7 +750,12 @@ $\epsilon_T \circ \Delta = T \epsilon \circ \Delta = id_T$
 \section{Évaluer un automate est comonadique}
 
 \begin{frame}
-TODO: Une image pour la section evaluation comonadic des automates. automata\_flip.png ?
+\begin{center}
+\textbf{ Evaluer un automate est comonadique }
+\end{center}
+\begin{center}
+\includegraphics[scale=0.5]{automata_flip.png}
+\end{center}
 \end{frame}
 
 \subsection{Un univers}
