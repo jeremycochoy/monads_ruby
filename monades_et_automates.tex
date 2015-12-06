@@ -29,7 +29,14 @@
 \end{frame}
 
 \begin{frame}
-\tableofcontents
+  \begin{columns}[t]
+  \begin{column}{5cm}
+  \tableofcontents[sections={1-3}]
+  \end{column}
+  \begin{column}{5cm}
+  \tableofcontents[sections={4-8}]
+  \end{column}
+  \end{columns}
 \end{frame}
 
 \begin{frame}
@@ -502,6 +509,9 @@ $\mu \circ T \eta = \mu \circ \eta_T = id_T$
 
 
 \section{Automates Cellulaires}
+
+\subsection{Qu'est-ce que c'est?}
+
 \begin{frame}
 \begin{center}
 \textbf{Automates cellulaires}
@@ -509,13 +519,13 @@ $\mu \circ T \eta = \mu \circ \eta_T = id_T$
 
 \begin{center}
 %\includegraphics[scale=0.5]{automata_flip.png}
-%\includegraphics[scale=0.16]{textile_cone.jpg}
-TODO : COMMIT TEXTILE CONE
+\includegraphics[scale=0.16]{textile_cone.jpg}
 \end{center}
 
 \begin{center}Toison d'or\end{center}
 
 \end{frame}
+
 
 \begin{frame}
 \frametitle{Qu'est-ce qu'un automate cellulaire?}
@@ -542,15 +552,11 @@ TODO : COMMIT TEXTILE CONE
 \end{block}
 \end{frame}
 
+\subsection{Le jeu de la vie}
 \begin{frame}
 \frametitle{The "Game of Life"}
 \begin{center}
-\
-
-
-
-
-{Jeu de la vie} (J. H. Conway)
+\bf{Jeu de la vie} (J. H. Conway)
 \end{center}
 \begin{center}
 \includegraphics[scale=0.5]{game_of_life.png}
@@ -567,6 +573,7 @@ TODO : COMMIT TEXTILE CONE
 \end{center}
 \end{frame}
 
+\subsection{Algorithme 1D}
 \begin{frame}
 \frametitle{La grille}
 \begin{block}{La grille de l'automate}
