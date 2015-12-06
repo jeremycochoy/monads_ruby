@@ -49,7 +49,7 @@
 C'est un \emph{ensemble} de valeurs.
 \end{block}
 \pause
-\begin{exampleblock}{Examples :}
+\begin{exampleblock}{Exemples :}
 \begin{itemize}
 \item $Int = \{-2 147 483 648, \dots, 2 147 483 647\}$
 \item $Bool = \{True, False\}$
@@ -178,7 +178,7 @@ Un foncteur permet de passer d'un monde (les types a) vers un autre (les types F
 
 \begin{frame}
 \frametitle{Functorial mapping}
-On ne peut plus appliquer la fonction telle quelle les diagrammes suivant commutent :
+On ne peut plus appliquer la fonction telle qu'elle les diagrammes suivant commutent :
 
 \begin{center}
 \includegraphics[scale=0.3]{wrong_type.png}
@@ -391,7 +391,7 @@ Que faire d'un \verb!M (M c)!?
 
 \begin{frame}
 \frametitle{Monades - Catégories}
-Une monade $(T, \mu, \eta)$ est la donné d'un
+Une monade $(T, \mu, \eta)$ est la donnée d'un
 endofoncteur $T : C \rightarrow C$ et de deux
 transformations naturelles $\mu : T\circ T \rightarrow T$ et $\eta : 1_C \rightarrow T$ telles que :
 
@@ -524,7 +524,7 @@ TODO : COMMIT TEXTILE CONE
 		\item Un nombre fini d'états $S$,
 		\item Une grille de cellules,
 		\item La notion de voisinage d'une cellule $V_c$,
-		\item D'une fonction de transition qui à une cellule associe sont nouvelle état.
+		\item Une fonction de transition qui à une cellule associe son nouvel état.
 	\end{itemize}
 \end{block}
 \end{frame}
@@ -591,7 +591,7 @@ TODO : COMMIT TEXTILE CONE
 	\end{center}
 \end{block}
 \pause
-\begin{block}{On peux aussi écrire :}
+\begin{block}{On peut aussi écrire :}
 	\begin{center}
 	\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
 	\hline
@@ -642,7 +642,7 @@ TODO : COMMIT TEXTILE CONE
 
 \begin{frame}
 \frametitle{Comonades - Catégories}
-Une comonade $(T, \delta, \epsilon)$ est la donné d'un
+Une comonade $(T, \delta, \epsilon)$ est la donnée d'un
 endofoncteur $T : C \rightarrow C$ et de deux
 transformations naturelles $\Delta : T \rightarrow T\circ T$ et $\epsilon : T \rightarrow 1_C$ telles que :
 
@@ -766,7 +766,7 @@ $\epsilon_T \circ \Delta = T \epsilon \circ \Delta = id_T$
 \end{center}
 
 \begin{block}{Un ruban}
-On représente l'univers dans lequel vie notre automate par un ruban, que l'on voie comme trois parties :
+On représente l'univers dans lequel vie notre automate par un ruban, que l'on voit comme trois parties :
 
 \begin{itemize}
 \item La partie infinie à gauche
@@ -805,9 +805,9 @@ left, right :: Universe a -> Universe a
 
 \subsection{Un foncteur}
 \begin{frame}
-\frametitle{Univers est fonctoriel}
+\frametitle{L'univers est fonctoriel}
 \begin{block}{Un foncteur}
-Notre ruban est naturellement un foncteur : Il suffit d'appliquer à notre $universe a$ une fonction $a -> b$ sur chacune des cellules pour obtenir un $Universe b$.
+Notre ruban est naturellement un foncteur : il suffit d'appliquer à notre \verb!Universe a! une fonction \verb!a -> b! sur chacune des cellules pour obtenir un \verb!Universe b!.
 \end{block}
 \begin{block}{}
 fmap :: (a -> b) -> Universe a -> Universe b
@@ -837,7 +837,7 @@ extract :: Universe a -> a
 \end{center}
 
 \begin{block}{L'opération duplicate}
-On veut construire un univers où chaque case du ruban contient elle même... un univers. Il s'agit de contenir tous les shift possible de notre univers de départ.
+On veut construire un univers où chaque case du ruban contient elle-même... un univers. Il s'agit de contenir tous les shift possible de notre univers de départ.
 \end{block}
 
 \begin{block}{}
@@ -853,11 +853,11 @@ duplicate :: Universe a -> Universe (Universe a)
 \includegraphics[scale=0.15]{ribbon_convo.png}
 \end{center}
 \begin{block}{La loi de notre automate}
-Notre automate est décris par une fonction qui, à un univers, associe l'état de la cellule observé à la prochaine itération. On a donc accès à tout l'univers.
+Notre automate est décrit par une fonction qui, à un univers, associe l'état de la cellule observé à la prochaine itération. On a donc accès à tout l'univers.
 \end{block}
 \pause
 \begin{block}{Rule 30}
-Pour Rule 30, on a besoin de la cellule couramment observé, et de ses voisines de droite et de gauche.
+Pour Rule 30, on a besoin de la cellule couramment observée, et de ses voisines de droite et de gauche.
 \end{block}
 \pause
 \begin{exampleblock}{}
