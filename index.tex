@@ -1,4 +1,5 @@
 \documentclass{beamer}
+\usepackage{listings}
 
 \usepackage[frenchb]{babel}
 \usepackage[T1]{fontenc}
@@ -52,99 +53,134 @@
 
 \section{Foncteurs applicatifs}
 
-\subsection{Types}
-\begin{frame}
-\frametitle{Les types}
-\begin{block}{Qu'est-ce qu'un type?}
-C'est un \emph{ensemble} de valeurs.
-\end{block}
-\pause
-\begin{exampleblock}{Exemples :}
-\begin{itemize}
-\item $Int = \{-2 147 483 648, \dots, 2 147 483 647\}$
-\item $Bool = \{True, False\}$
-\item $Char = \{'a', 'b', 'c' , \dots\}$
-\pause
-\item $[Bool] = \{[], [True], [False], [True, False], [False, True], \dots\}$
-\pause
-\item $[a]$
-\end{itemize}
-
-\end{exampleblock}
-\end{frame}
-
-\begin{frame}
-\frametitle{Les types}
-\begin{block}{Construire son type :}
-\begin{itemize}
-\item Trival = Plus | Minus | Zero
-\pause
-\item Box a = InABox a
-\pause
-\item Maybe a = Just a | Nothing
-\pause
-\item Either a b = Left a | Right b
-\end{itemize}
-\end{block}
-
-\pause
-
-Just, Nothing, InABox etc portent le doux nom de \emph{constructeur de type}. C'est aussi le cas de \emph{[]}.
-\end{frame}
-
 \subsection{Fonctions}
-\begin{frame}
+\begin{frame}[fragile]
 \frametitle{Les fonctions}
 \begin{block}{}
-Ce sont les traitements que l'on peut implémenter.
+On considère des fonctions \emph{pures}:
+\begin{itemize}
+\item déterministe
+\item sans effet de bord
+\end{itemize}
 \end{block}
 \begin{center}
 \includegraphics[scale=0.2]{fct.png}
 \end{center}
 \pause
 \begin{block}{}
-Une fonction ne lance pas de missile.
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+def add2(n)
+  n + 2
+end
+\end{lstlisting}
 \end{block}
 \end{frame}
 
+\subsection{Types}
+\begin{frame}
+\frametitle{Les types}
+\begin{block}{Qu'appelons nous un type?}
+Pour nous, c'est un \emph{ensemble} de valeurs.
+\end{block}
+\pause
+\begin{exampleblock}{Exemples :}
+\begin{itemize}
+\item $Integer = \{-2 147 483 648, \dots, 2 147 483 647\}$
+\item $NilClass = \{nil\}$
+\item $Boolean = \{True, False\}$
+\pause
+\item $[Nilclass] = \{[], [True], [False], [True, False], [False, True], \dots\}$
+\end{itemize}
+\end{exampleblock}
+\end{frame}
 
 \begin{frame}
-\frametitle{Les fonctions}
-\begin{block}{Une fonction a aussi un type : \emph{a -> b}}
+\frametitle{Les types}
+\begin{block}{Les fonctions sont de type : \emph{a -> b}}
 \begin{itemize}
-\item floor   :: Float -> Int
-\item (+2):: Int -> Int
-\pause
-\item id      :: a -> a
-\item map :: (a -> b) -> [a] -> [b]
+\item floor           :: Float -> Integer
+\item 2.method(:+)    :: Integer -> Integer
 \end{itemize}
 \end{block}
-
-\end{frame}
-
-
-\begin{frame}
-\frametitle{Les fonctions}
-\begin{block}{Ça se compose}
+\begin{block}{Les fonctions se composent}
 \begin{itemize}
 \item f1 :: a -> b
 \item f2 :: b -> c
-\item f2 . f1 :: a -> c
+\item \{ |x| f2(f1(x)) \} :: a -> c
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Fonctions à plusieurs paramètres}
+\begin{block}{}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+sum = -> (a, b) do
+  a + b
+end
+\end{lstlisting}
+\end{block}
 \pause
-\item . :: (a -> b) -> (b -> c) -> (a -> c)
+\begin{block}{}
+\begin{lstlisting}
+irb> sum.(2,3)
+=> 5
+\end{lstlisting}
+\end{block}
+\pause
+\begin{block}{}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+irb> sum.curry.(1)
+=> #<Proc:0x000000000288c3c0 (lambda)>
+irb> sum.curry.(1).(2)
+=> 3
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Fonctions à plusieurs paramètres}
+\begin{block}{}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+sum = -> (a, b) do
+  a + b
+end
+\end{lstlisting}
+\end{block}
+\begin{block}{Curryfication}
+\begin{itemize}
+\item sum :: (a, b) -> c
+\item sum.curry :: a -> (b -> c)
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Fonctions à plusieurs paramètres}
+\begin{block}{}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+sum = -> (a, b) do
+  a + b
+end
+\end{lstlisting}
+\end{block}
+\begin{block}{Curryfication}
+\begin{itemize}
+\item sum :: (a, b) -> c
+\item sum.curry :: a -> b -> c
 \end{itemize}
 \end{block}
 \pause
-
-La collection de tous les types forme une catégorie. Les flèches sont les fonctions implémentables. On l’appelle la catégorie des types.
-
+\begin{block}{Exercice}
+compose :: (a -> b) -> (b -> c) -> (a -> c)
+\end{block}
 \end{frame}
 
 \subsection{Foncteurs}
 
 
 \begin{frame}
-\frametitle{Les foncteurs}
+\frametitle{Les foncteurs applicatifs}
 \begin{block}{Un foncteur F agit sur les types ...}
 \begin{itemize}
 \item a => F a
@@ -152,8 +188,9 @@ La collection de tous les types forme une catégorie. Les flèches sont les fonc
 \end{block}
 \begin{exampleblock}{}
 \begin{itemize}
-\item a => Maybe a
 \item a => [a]
+\item a => Tree a
+\item a => Maybe a
 \end{itemize}
 \end{exampleblock}
 
@@ -167,8 +204,8 @@ La collection de tous les types forme une catégorie. Les flèches sont les fonc
 
 \begin{exampleblock}{}
 \begin{itemize}
-\item fmap (+2) :: F Int -> F Int
-\item fmap id :: F a -> F a
+\item fmap 2.method(:+2) :: F Int -> F Int
+\item fmap floor :: F Float -> F Int
 \end{itemize}
 \end{exampleblock}
 \end{frame}
@@ -185,6 +222,92 @@ Un foncteur permet de passer d'un monde (les types a) vers un autre (les types F
 \end{block}
 
 \end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Maybe: Une implémentation}
+\begin{center}
+\includegraphics[scale=0.1]{a2fa.png}
+\end{center}
+\begin{block}{}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+class Just < Maybe
+  def self.call(value)
+    new [value]
+  end
+end
+\end{lstlisting}
+\end{block}
+\begin{block}{}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+irb> Just.(3)
+=> #<Just:0x000000000359c010 @content=[3]>
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Maybe: Une implémentation}
+\begin{center}
+\includegraphics[scale=0.1]{a2fa.png}
+\end{center}
+
+\begin{block}{}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+class Nothing < Maybe
+  def self.call()
+    new []
+  end
+end
+\end{lstlisting}
+\end{block}
+\begin{block}{}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+irb> Nothing.()
+=> #<Nothing:0x0000000002d97d38 @content=[]>
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Maybe: Une implémentation}
+\begin{block}{}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+class Maybe
+  private_class_method :new
+
+  def initialize(content)
+    @content = content
+  end
+  def from_maybe(default_value)
+    return default_value if @content.empty?
+    @content.first
+  end
+end
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\begin{block}{}
+\begin{lstlisting}[basicstyle=\ttfamily,keywordstyle=\color{red}]
+irb> Just.(3).from_maybe
+=> 3
+irb> Nothing.().from_maybe
+=> nil
+\end{lstlisting}
+\end{block}
+\begin{block}{}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+case box
+when Nothing
+  puts "It's nothing dear."
+when Just
+  puts "It's just #{box.from_maybe}."
+end
+\end{lstlisting}
+\end{block}
+\end{frame}
+
 
 \begin{frame}
 \frametitle{Functorial mapping}
