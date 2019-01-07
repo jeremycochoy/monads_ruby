@@ -1,5 +1,13 @@
 \documentclass{beamer}
 \usepackage{listings}
+\lstset{language=ruby,
+                basicstyle=\ttfamily,
+                keywordstyle=\color{red}\ttfamily,
+                stringstyle=\color{orange}\ttfamily,
+                identifierstyle=\color{blue},
+                commentstyle=\color{gray}\ttfamily,
+                morecomment=[l][\color{magenta}]{\#}
+}
 
 \usepackage[frenchb]{babel}
 \usepackage[T1]{fontenc}
@@ -115,7 +123,7 @@ Pour nous, c'est un \emph{ensemble} de valeurs.
 \frametitle{Fonctions à plusieurs paramètres}
 \begin{block}{}
 \begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
-sum = -> (a, b) do
+sum = ->(a, b) do
   a + b
 end
 \end{lstlisting}
@@ -142,7 +150,7 @@ irb> sum.curry.(1).(2)
 \frametitle{Fonctions à plusieurs paramètres}
 \begin{block}{}
 \begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
-sum = -> (a, b) do
+sum = ->(a, b) do
   a + b
 end
 \end{lstlisting}
@@ -159,7 +167,7 @@ end
 \frametitle{Fonctions à plusieurs paramètres}
 \begin{block}{}
 \begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
-sum = -> (a, b) do
+sum = ->(a, b) do
   a + b
 end
 \end{lstlisting}
@@ -288,22 +296,17 @@ end
 \end{frame}
 
 \begin{frame}[fragile]
+
+\begin{center}
+\includegraphics[scale=0.2]{a2fa.png}
+\end{center}
+
 \begin{block}{}
 \begin{lstlisting}[basicstyle=\ttfamily,keywordstyle=\color{red}]
 irb> Just.(3).from_maybe
 => 3
 irb> Nothing.().from_maybe
 => nil
-\end{lstlisting}
-\end{block}
-\begin{block}{}
-\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
-case box
-when Nothing
-  puts "It's nothing dear."
-when Just
-  puts "It's just #{box.from_maybe}."
-end
 \end{lstlisting}
 \end{block}
 \end{frame}
@@ -326,17 +329,48 @@ Mais le foncteur nous donne une nouvelle flèche.
 \end{center}
 \end{frame}
 
+\begin{frame}[fragile]
+\frametitle{Functorial mapping}
+\begin{center}
+\includegraphics[scale=0.1]{f_fct.png}
+\end{center}
+\begin{block}{}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+add2 = ->(x) {x + 2}
+\end{lstlisting}
+\end{block}
+
+\begin{block}{}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily]
+add2.call Just.(3)
+# NoMethodError (undefined method `+' for
+#   #<Just:0x0000000003485280 @content=[3]>)
+
+(fmap add2).call Just.(3)
+# => #<Just:0x00000000036f8ff8 @content=[5]>
+\end{lstlisting}
+\end{block}
+\end{frame}
 
 
-\begin{frame}
+
+\begin{frame}[fragile]
 \frametitle{Dura lex sed lex}
 \begin{alertblock}{Un foncteur doit respecter des lois}
 \begin{itemize}
 \item fmap id = id
-\item fmap (p . q) = (fmap p) . (fmap q)
+\item fmap (p $\circ$ q) = (fmap p) $\circ$ (fmap q)
 
 \end{itemize}
 \end{alertblock}
+\pause
+\begin{block}{}
+\begin{lstlisting}[language=ruby]
+id = ->(x) {x}
+
+(p o q) = ->(x) { p.(q.(x)) }
+\end{lstlisting}
+\end{block}
 
 \pause
 Un foncteur est un endofoncteur de la catégorie des types.
@@ -348,7 +382,7 @@ Un foncteur est un endofoncteur de la catégorie des types.
 
 \frametitle{Monades}
 \begin{center}
-\includegraphics[scale=0.7]{cat.png}
+\includegraphics[scale=0.5]{monad_meme.png}
 \end{center}
 \end{frame}
 
@@ -394,11 +428,17 @@ L'exemple de Maybe : \verb!Nothing!
 
 \begin{exampleblock}{Quelques cas particuliers}
 	\begin{itemize}
-		\item Just
-		\item (: [])
-		\item Right
+		\item \verb!Just!
+		\item \verb![] <{}<!
 	\end{itemize}
 \end{exampleblock}
+\begin{block}{D'autres types}
+	\begin{itemize}
+		\item Maybe =  Nothing | Just a
+		\item Tree = Leaf | Node a (Tree a) (Tree a)
+		\item Either = Left a | Right b
+	\end{itemize}
+\end{block}
 \end{frame}
 
 
@@ -444,7 +484,7 @@ Que faire d'un \verb!M (M c)!?
 \pause
 \begin{exampleblock}{}
 \begin{center}
-\verb!join \$ Just (Just 3)!.
+\verb!join Just.(Just.(3))!.
 \end{center}
 \end{exampleblock}
 \end{frame}
@@ -465,32 +505,56 @@ Que faire d'un \verb!M (M c)!?
 \pause
 \begin{exampleblock}{}
 \begin{center}
-\verb!join \$ Just (Nothing)!.
+\verb!join Just.(Nothing.())!.
 \end{center}
 \end{exampleblock}
 \end{frame}
 
 
 
-\begin{frame}
+\begin{frame}[fragile]
+\frametitle{L'opérateur \emph{join}}
+\begin{center}
+\includegraphics[scale=0.1]{join.png}
+\end{center}
+\begin{block}{Une implémentation de join :}
+\begin{lstlisting}[language=ruby]
+def join(bbox)
+  case bbox
+  when Nothing
+    Nothing.()
+  when Just
+    bbox.from_maybe
+  end
+end
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
 \frametitle{L'opérateur \emph{bind}}
 \begin{block}{On cherche à définir la composition.}
-\verb!(>=>) :: (a -> M b) -> (b -> M c) -> (a -> M c)!
+\verb!bind :: (a -> M b) -> (b -> M c) -> (a -> M c)!
 \end{block}
 
 \pause
 
 \begin{block}{Nous avons :}
 \begin{itemize}
-\item \verb!(fmap g) . f :: a -> M (M c)!
+\item \verb!(fmap g) o f :: a -> M (M c)!
 \item \verb!join :: M (M a) -> M a!
 \end{itemize}
 \end{block}
 \pause
 
 \begin{block}{On peut maintenant composer $f$ et $g$.}
-
-\verb!f >=> g $\equiv$ join . (fmap g) . f!.
+\begin{lstlisting}[language=ruby]
+def bind(f, g)
+  ->(x) do
+    join (fmap g).(f.(x))
+  end
+end
+\end{lstlisting}
 \end{block}
 \end{frame}
 
@@ -500,8 +564,8 @@ Que faire d'un \verb!M (M c)!?
 \begin{block}{Une monade, c'est}
 
 	\begin{itemize}
-		\item fmap :: (a -> b) -> (M a -> M b)
 		\item pure :: a -> M a
+		\item fmap :: (a -> b) -> (M a -> M b)
 		\item join :: M (M a) -> M a
 	\end{itemize}
 
@@ -513,11 +577,11 @@ Que faire d'un \verb!M (M c)!?
 \frametitle{Dura lex sed lex}
 \begin{alertblock}{Une monade doit respecter des lois}
 \begin{itemize}
-\item \verb!pure . f $\equiv$ (fmap f) . pure!
-\item \verb!join . fmap (fmap f) $\equiv$ (fmap f) . join!
+\item \verb!pure o f $\equiv$ (fmap f) o pure!
+\item \verb!join o fmap (fmap f) $\equiv$ (fmap f) o join!
 \item[] \ 
-\item \verb!join . fmap join   $\equiv$ join . join!
-\item \verb!join . fmap pure   $\equiv$ join . pure = id!
+\item \verb!join o fmap join   $\equiv$ join o join!
+\item \verb!join o fmap pure   $\equiv$ join o pure = id!
 \end{itemize}
 \end{alertblock}
 \end{frame}
@@ -547,8 +611,8 @@ et
 $\mu \circ T \eta = \mu \circ \eta_T = id_T$.
 
 \pause
-
-Dans notre cas, $C$ est la catégorie des types.
+\medskip\medskip
+Dans notre cas $C$ la catégorie des types.
 \end{frame}
 
 \begin{frame}
