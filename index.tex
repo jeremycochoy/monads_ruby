@@ -376,7 +376,7 @@ id = ->(x) {x}
 Un foncteur est un endofoncteur de la catégorie des types.
 \end{frame}
 
-\subsection{Monades}
+\section{Monades}
 
 \begin{frame}
 
@@ -386,6 +386,7 @@ Un foncteur est un endofoncteur de la catégorie des types.
 \end{center}
 \end{frame}
 
+\subsection{Construction}
 \begin{frame}
 \frametitle{Donnée dans un contexte}
 
@@ -573,6 +574,14 @@ end
 
 \end{frame}
 
+
+\subsection{Théorie}
+\begin{frame}
+  \begin{center}
+    \includegraphics[scale=0.7]{haskell-the-understandable-parts}
+  \end{center}
+\end{frame}
+
 \begin{frame}
 \frametitle{Dura lex sed lex}
 \begin{alertblock}{Une monade doit respecter des lois}
@@ -585,6 +594,7 @@ end
 \end{itemize}
 \end{alertblock}
 \end{frame}
+
 
 \begin{frame}
 \frametitle{Monades - Catégories}
@@ -697,6 +707,25 @@ $\mu \circ T \eta = \mu \circ \eta_T = id_T$
 
 \end{frame}
 
+\begin{frame}
+  \frametitle{Et dans la vraie vie ?}
+  \begin{alertblock}{}
+  \begin{center}
+    Tout ça, à quoi ça sert?
+  \end{center}
+  \end{alertblock}
+\end{frame}
+
+\subsection{The List Monade}
+\begin{frame}
+List: calcul non déterministe
+\end{frame}
+
+\subsection{Ruby's Maybe Monade}
+\begin{frame}
+
+Type UnionDisjointe nil
+\end{frame}
 
 \section{Automates Cellulaires}
 
@@ -706,6 +735,7 @@ $\mu \circ T \eta = \mu \circ \eta_T = id_T$
 \begin{center}
 \textbf{Automates cellulaires}
 \end{center}
+
 
 \begin{center}
 %\includegraphics[scale=0.5]{automata_flip.png}
