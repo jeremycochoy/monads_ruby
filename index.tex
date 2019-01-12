@@ -330,6 +330,25 @@ Mais le foncteur nous donne une nouvelle flèche.
 \end{frame}
 
 \begin{frame}[fragile]
+  \frametitle{Implémentation de fmap}
+  \begin{block}{}
+    \begin{lstlisting}
+def fmap(f)
+  ->(box) do
+    case box
+    when Nothing
+      return Nothing.()
+    when Just
+      r = f.(box.from_maybe)
+      Just.(r)
+    end
+  end
+end
+    \end{lstlisting}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
 \frametitle{Functorial mapping}
 \begin{center}
 \includegraphics[scale=0.1]{f_fct.png}
@@ -533,9 +552,9 @@ end
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{L'opérateur \emph{bind}}
+\frametitle{L'opérateur \emph{rfish}}
 \begin{block}{On cherche à définir la composition.}
-\verb!bind :: (a -> M b) -> (b -> M c) -> (a -> M c)!
+\verb!rfish :: (a -> M b) -> (b -> M c) -> (a -> M c)!
 \end{block}
 
 \pause
@@ -550,7 +569,7 @@ end
 
 \begin{block}{On peut maintenant composer $f$ et $g$.}
 \begin{lstlisting}[language=ruby]
-def bind(f, g)
+def rfish(f, g)
   ->(x) do
     join (fmap g).(f.(x))
   end
@@ -578,7 +597,7 @@ end
 \subsection{Théorie}
 \begin{frame}
   \begin{center}
-    \includegraphics[scale=0.7]{haskell-the-understandable-parts}
+    \includegraphics[scale=0.6]{haskell-the-understandable-parts}
   \end{center}
 \end{frame}
 
@@ -707,6 +726,7 @@ $\mu \circ T \eta = \mu \circ \eta_T = id_T$
 
 \end{frame}
 
+\section{Applications In Real Life}
 \begin{frame}
   \frametitle{Et dans la vraie vie ?}
   \begin{alertblock}{}
@@ -716,417 +736,191 @@ $\mu \circ T \eta = \mu \circ \eta_T = id_T$
   \end{alertblock}
 \end{frame}
 
-\subsection{The List Monade}
+\subsection{Monade de listes}
 \begin{frame}
-List: calcul non déterministe
+  \frametitle{Calculs non déterministes}
+  \begin{center}
+    \includegraphics[scale=0.2]{deter-geometric}
+  \end{center}
+  \begin{block}{}
+    \begin{itemize}
+      \item Déterministe: Calcul produisant une valeur.
+    \end{itemize}
+  \end{block}
+  \medskip
+  \begin{center}
+    \includegraphics[scale=0.2]{non-deter-geometric}
+  \end{center}
+  \begin{block}{}
+    \begin{itemize}
+      \item Non déterministe: Calcul produisant plusieurs valeurs.
+    \end{itemize}
+  \end{block}
 \end{frame}
 
-\subsection{Ruby's Maybe Monade}
-\begin{frame}
-
-Type UnionDisjointe nil
+\begin{frame}[fragile]
+  \frametitle{Quelques exemples}
+  \begin{center}
+    \includegraphics[scale=0.2]{multiple-res.png}
+  \end{center}
+  \begin{block}{}
+    \begin{lstlisting}[language=ruby]
+powers = ->(n) do
+  [n, n*n, n*n*n]
+end
+    \end{lstlisting}
+  \end{block}
+  \begin{block}{}
+    \begin{lstlisting}[language=ruby]
+neighbors = ->(n) do
+  [n-1, n+1]
+end
+    \end{lstlisting}
+  \end{block}
 \end{frame}
 
-\section{Automates Cellulaires}
-
-\subsection{Qu'est-ce que c'est?}
-
-\begin{frame}
-\begin{center}
-\textbf{Automates cellulaires}
-\end{center}
-
-
-\begin{center}
-%\includegraphics[scale=0.5]{automata_flip.png}
-\includegraphics[scale=0.16]{textile_cone.jpg}
-\end{center}
-
-\begin{center}Toison d'or\end{center}
-
+\begin{frame}[fragile]
+  \frametitle{Implémentation de fmap}
+  \begin{exampleblock}{C'est tout simplement \verb!Array\#map!}
+    \begin{center}
+      $[1, 2, 3] {\xrightarrow{\text{fmap f}}} [f(1), f(2), f(3)]$
+    \end{center}
+  \end{exampleblock}
+  \medskip
+  \begin{block}{}
+    \begin{lstlisting}[language=ruby]
+def fmap(f)
+  ->(list) { list.map(f) }
+end
+    \end{lstlisting}  
+  \end{block}
 \end{frame}
 
-
-\begin{frame}
-\frametitle{Qu'est-ce qu'un automate cellulaire?}
-\begin{block}{Un automate cellulaire, c'est :}
-	\begin{itemize}
-		\item Un nombre fini d'états $S$,
-		\item Une grille de cellules,
-		\item La notion de voisinage d'une cellule $V_c$,
-		\item Une fonction de transition qui à une cellule associe son nouvel état.
-	\end{itemize}
-\end{block}
+\begin{frame}[fragile]
+  \frametitle{Join et RFish}
+  \begin{center}
+    \includegraphics[scale=0.2]{flatten}
+  \end{center}
+  \begin{block}{\verb!join!}
+    \begin{lstlisting}[language=ruby]
+def join(llist)
+  llist.flatten(1)
+end
+    \end{lstlisting}  
+  \end{block}
+  \begin{block}{\verb!rfish!}
+    \begin{lstlisting}[language=ruby]
+def rfish(f, g)
+  ->(x) { f.(x).map(&g).flatten }
+end
+    \end{lstlisting}  
+  \end{block}
 \end{frame}
 
-\begin{frame}
-\frametitle{Combien d'automates cellulaires différents?}
-\begin{block}{On a le choix :}
-	\begin{itemize}
-	\item De la dimension de la grille,
-	\item Des lois,
-	\item Du nombres d'états (couleurs),
-	\item De la forme du voisinages (boules de rayon r, etc.),
-	\item De ne pas être déterministe.
-	\end{itemize}
-\end{block}
+\begin{frame}[fragile]
+  \frametitle{Monade de listes}
+  \begin{exampleblock}{Example d'utilisation}
+    \begin{lstlisting}[language=ruby]
+irb> rfish(neighbors, neighbors).(42)
+=> [40, 42, 42, 44]
+irb> rfish(powers, powers).(2)
+=> [2, 4, 8, 4, 16, 64, 8, 64, 512]
+irb> rfish(neighbors, powers).(42)
+=> [41, 1681, 68921, 43, 1849, 79507]
+irb> rfish(->(x) { [x, -x] }, neighbors).(42)
+=> [41, 43, -43, -41]
+    \end{lstlisting}
+  \end{exampleblock}
 \end{frame}
 
-\subsection{Le jeu de la vie}
+\subsection{La Monade Maybe de Ruby}
+
+{
+\setbeamercolor{background canvas}{bg=black}
 \begin{frame}
-\frametitle{The "Game of Life"}
-\begin{center}
-\bf{Jeu de la vie} (J. H. Conway)
-\end{center}
-\begin{center}
-\includegraphics[scale=0.5]{game_of_life.png}
-\end{center}
+  \frametitle{La monade \verb!nil!}
+  \begin{center}
+    \includegraphics[scale=0.8]{blackhole}
+  \end{center}
+  \begin{alertblock}{En ruby Maybe s'appelle \verb!nil!}
+  Union disjointe $a \bigsqcup \{nil\}$.
+  \end{alertblock}
 \end{frame}
-
-\begin{frame}
-\frametitle{Étude d'un cas : Rule 30}
-\begin{center}
-\textbf{Rule 30}
-\end{center}
-\begin{center}
-\includegraphics[scale=1]{rule30.png}
-\end{center}
-\end{frame}
-
-\subsection{Algorithme 1D}
-\begin{frame}
-\frametitle{La grille}
-\begin{block}{La grille de l'automate}
-\begin{center}
-\includegraphics[scale=0.5]{grid.png}
-\end{center}
-\end{block}
-\begin{itemize}
-	\item Une grille 1D
-	\item Deux états (Blanc / Noir)
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\begin{block}{}
-	Un voisinage de 3 cellules.
-\end{block}
-\pause
-\begin{block}{Les règles}
-	\begin{center}
-	\includegraphics[scale=1]{rule30_rule.png}
-	\end{center}
-\end{block}
-\pause
-\begin{block}{On peut aussi écrire :}
-	\begin{center}
-	\begin{tabular}{|l|c|c|c|c|c|c|c|c|}
-	\hline
-	Ancien état & 111 & 110 & 101 & 100 & 011 & 010 & 001 & 000 \\
-	\hline
-	Nouvel état	& 0   & 0   & 0   & 1   & 1   & 1   & 1   & 0 \\
-	\hline
-	\end{tabular}
-	\end{center}
-\end{block}
-\end{frame}
-
-\section{Comonades}
-
-\begin{frame}
-\begin{center}
-\textbf{Comonades}
-\end{center}
-
-\begin{center}
-\includegraphics[scale=0.5]{comonad.jpg}
-\end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{C'est le dual d'une monade}
-
-\begin{itemize}
-\item C'est un foncteur M
-\item extract (copure) (co uinit) :: M a -> a
-\item duplicate (cojoin) (co product $\delta$) :: M a -> M (M a)
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Dura lex sed lex}
-\begin{alertblock}{Une comonade doit respecter des lois}
-\begin{itemize}
-\item \verb!(fmap (fmap f)) . duplicate $\equiv$ duplicate . fmap f!
-\item \verb!duplicate . duplicate = fmap duplicate . duplicate!
-\item[] \ 
-\item \verb!duplicate . duplicate $\equiv$ fmap duplicate . duplicate! (commut)
-\item \verb!fmap extract . duplicate $\equiv$ extract . duplicate $\equiv$ id! (co unit)
-\end{itemize}
-\end{alertblock}
-\end{frame}
-
-
-\begin{frame}
-\frametitle{Comonades - Catégories}
-Une comonade $(T, \delta, \epsilon)$ est la donnée d'un
-endofoncteur $T : C \rightarrow C$ et de deux
-transformations naturelles $\Delta : T \rightarrow T\circ T$ et $\epsilon : T \rightarrow 1_C$ telles que :
-
-\[
-\begin{array}{cc}
-\xymatrix{
-T(X) \ar[r]^{\Delta_X} \ar[d]_{\Delta_X} & T(T(X)) \ar[d]^{\Delta_{T(X)}} \\
-T(T(X)) \ar[r]_{T(\Delta_X)} & T(T(T(X))) \\
 }
-&
-\xymatrix{
-T(X) \ar[d]_{\Delta_X} \ar[r]^{\Delta_X}  \ar@{=}[dr] & T(T(X))   \ar[d]^{\epsilon_{T(X)}} \\
-T(T(X)) \ar[r]_{T(\epsilon_X)} & T(X) \\
+{
+\setbeamercolor{background canvas}{bg=black}
+\begin{frame}[fragile]
+  \frametitle{La monade \verb!nil!}
+  \begin{center}
+    \includegraphics[scale=0.4]{blackhole}
+  \end{center}
+  \begin{block}{Opérateur bind \verb!\&.!}
+    \begin{lstlisting}[language=ruby]
+some_computation(42)&.get_value("bidirectional")
+    \end{lstlisting}
+  \end{block}
+  \begin{block}{Opérateur bind \verb!\&.!}
+  \begin{itemize}
+  \item  \&. :: $a \bigsqcup \{nil\}$ -> (a -> $b \bigsqcup \{nil\})$ -> $b \bigsqcup \{nil\}$
+  \item bind :: M a -> (a -> M b) -> M b
+  \end{itemize}
+  
+  \end{block}
+\end{frame}
 }
-\end{array}
-\]
-c'est à dire
-$\Delta_T \circ \Delta = T \Delta \circ \Delta$
-et
-$T \epsilon \circ \Delta = \epsilon_T \circ \Delta = id$.
+
+\begin{frame}[fragile]
+  \frametitle{On aurait aussi pu parler de...}
+\begin{columns}[T]
+  \begin{column}{0.5\textwidth}
+    \includegraphics[scale=0.3]{goldfish}
+  \end{column}
+  \begin{column}{0.5\textwidth}
+    \begin{itemize}
+      \item Left/Right Fish and Bind
+      \item List comprehension
+      \item Monades transformeurs
+      \item Comonades et zippers
+      \item Application aux automates cellulaires
+    \end{itemize}
+  \end{column}
+\end{columns}
 \end{frame}
 
 \begin{frame}
-\frametitle{A chaque loi son diagramme}
-\begin{alertblock}{\verb!extract! est une T.N.}
-\verb!f . extract $\equiv$ extract . (fmap f)!
-\end{alertblock}
-
-\begin{block}{}
-\[
-\xymatrix{
-X \ar[r]^{f} & Y  \\
-T(X) \ar[r]_{T(f)} \ar[u]_{\epsilon_X} & T(Y) \ar[u]^{\epsilon_Y}\\
-}
-\]
-\end{block}
-
+  \frametitle{Qui suis-je?}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+        \includegraphics[scale=0.06]{techgate}
+      \end{center}
+      \begin{center}
+         \includegraphics[scale=0.25]{social-networks}
+      \end{center}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{block}{Dr. Jérémy Cochoy}
+      \begin{center}
+      	 jeremy.cochoy@gmail.com
+         \verb!http://techgate.fr!
+      \end{center}
+      \end{block}
+      \begin{block}{Backend Developper}
+        \begin{center}
+          \includegraphics[scale=0.4]{klaxit}
+        \end{center}
+      \end{block}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \begin{frame}
-\frametitle{A chaque loi son diagramme}
-\begin{alertblock}{\verb!duplicate! est une T.N.}
-\verb!(fmap (fmap f)) . duplicate $\equiv$ duplicate . fmap f!
-\end{alertblock}
-
-\begin{block}{}
-\[
-\xymatrix{
-T(X) \ar[r]_{T(f)} \ar[d]_{\Delta_{X}} & T(Y) \ar[d]^{\Delta_{Y}} \\
-T(T(X)) \ar[r]^{T(T(f))} & T(T(Y)) \\
-}
-\]
-\end{block}
-
-\end{frame}
-
-
-\begin{frame}
-\frametitle{A chaque loi son diagramme}
-\begin{alertblock}{Coassociativité}
-\verb!duplicate . duplicate = fmap duplicate . duplicate!
-\end{alertblock}
-
-\begin{block}{}
-
-\[
-\xymatrix{
-T(X) \ar[r]^{\Delta_X} \ar[d]_{\Delta_X} & T(T(X)) \ar[d]^{\Delta_{T(X)}} \\
-T(T(X)) \ar[r]_{T(\Delta_X)} & T(T(T(X))) \\
-}
-\]
-\end{block}
-
-\begin{block}{}
-\begin{center}
-$\Delta_T \circ \Delta = T\Delta \circ \Delta$
-\end{center}
-\end{block}
-
-\end{frame}
-
-\begin{frame}
-\frametitle{A chaque loi son diagramme}
-\begin{alertblock}{Existence d'une counité}
-\verb!extract . duplicate = fmap extract . duplicate = id!
-\end{alertblock}
-
-\begin{block}{}
-\[
-\xymatrix{
-T(X) \ar[d]_{\Delta_X} \ar[r]^{\Delta_X}  \ar@{=}[dr] & T(T(X))   \ar[d]^{\epsilon_{T(X)}} \\
-T(T(X)) \ar[r]_{T(\epsilon_X)} & T(X) \\
-}
-\]
-\end{block}
-
-\begin{block}{}
-\begin{center}
-$\epsilon_T \circ \Delta = T \epsilon \circ \Delta = id_T$
-\end{center}
-\end{block}
-
-\end{frame}
-
-\section{Évaluer un automate est comonadique}
-
-\begin{frame}
-\begin{center}
-\textbf{ Evaluer un automate est comonadique }
-\end{center}
-\begin{center}
-\includegraphics[scale=0.5]{automata_flip.png}
-\end{center}
-\end{frame}
-
-\subsection{Un univers}
-\begin{frame}
-\frametitle{L'univers}
-\begin{center}
-\includegraphics[scale=0.23]{ribbon_struct.png}
-\end{center}
-
-\begin{block}{Un ruban}
-On représente l'univers dans lequel vit notre automate par un ruban, que l'on voit comme trois parties :
-
-\begin{itemize}
-\item La partie infinie à gauche
-\item La case observée
-\item La partie infinie à droite
-\end{itemize}
-\end{block}
-
-\begin{block}{}
-data Universe a = Universe [a] a [a]
-\end{block}
-\end{frame}
-
-\begin{frame}
-\frametitle{Quelques opérations sur notre univers}
-
-\begin{center}
-\includegraphics[scale=0.25]{ribbon_left.png}
-\end{center}
-\begin{block}{Voyageons}
-On s'autorise à effectuer quelques opérations raisonnables sur notre univers :
-\begin{itemize}
-\item Regarder à gauche (left shift)
-\item Regarder à droite (right shift)
-\end{itemize}
-\end{block}
-\pause
-\begin{block}{}
-Moralement, on \emph{translate} notre ruban.
-\end{block}
-\pause
-\begin{block}{}
-left, right :: Universe a -> Universe a
-\end{block}
-\end{frame}
-
-\subsection{Un foncteur}
-\begin{frame}
-\frametitle{L'univers est fonctoriel}
-\begin{block}{Un foncteur}
-Notre ruban est naturellement un foncteur : il suffit d'appliquer à notre \verb!Universe a! une fonction \verb!a -> b! sur chacune des cellules pour obtenir un \verb!Universe b!.
-\end{block}
-\begin{block}{}
-fmap :: (a -> b) -> Universe a -> Universe b
-\end{block}
-\end{frame}
-
-\subsection{Une comonade}
-\begin{frame}
-\frametitle{Comonades, nous voilà : extract}
-
-\begin{center}
-\includegraphics[scale=0.3]{ribbon_extract.png}
-\end{center}
-\begin{block}{Extraire une information}
-Depuis notre univers, on peut extraire une valeur : celle de la case que l'on est en train d'observer!
-
-\end{block}
-\begin{block}{}
-extract :: Universe a -> a
-\end{block}
-\end{frame}
-
-\begin{frame}
-\frametitle{Comonades, nous voilà : duplicate}
-\begin{center}
-\includegraphics[scale=0.15]{ribbon_duplicate.png}
-\end{center}
-
-\begin{block}{L'opération duplicate}
-On veut construire un univers où chaque case du ruban contient elle-même... un univers. Il s'agit de contenir tous les shift possible de notre univers de départ.
-\end{block}
-
-\begin{block}{}
-duplicate :: Universe a -> Universe (Universe a)
-\end{block}
-\end{frame}
-
-\subsection{Evaluation}
-
-\begin{frame}
-\frametitle{Loi de convolution}
-\begin{center}
-\includegraphics[scale=0.15]{ribbon_convo.png}
-\end{center}
-\begin{block}{La loi de notre automate}
-Notre automate est décrit par une fonction qui, à un univers, associe l'état de la cellule observé à la prochaine itération. On a donc accès à tout l'univers.
-\end{block}
-\pause
-\begin{block}{Rule 30}
-Pour Rule 30, on a besoin de la cellule couramment observée, et de ses voisines de droite et de gauche.
-\end{block}
-\pause
-\begin{exampleblock}{}
-rule :: Universe a -> a
-\end{exampleblock}
-\end{frame}
-
-\begin{frame}
-\frametitle{L'évaluation est comonadique}
-\begin{alertblock}{Comment obtenir l'itération n+1 depuis l'itération n ?}
-Nous disposons maintenant de tous les outils pour, en une ligne, décrire l'itération au rang $n+1$ depuis l'univers au rang $n$.
-\end{alertblock}
-\pause
-\begin{block}{La pipeline :}
-\begin{itemize}
-\item On duplique notre univers :
-\item[] duplicate :: Universe a -> Universe (Universe a)
-\item On map notre règle sur chaque case :
-\item[] fmap rule :: Universe (Universe a) -> Universe a
-\end{itemize}
-\pause
-\end{block}
-\begin{exampleblock}{}
-fmap rule . duplicate :: Universe a -> Universe a
-\end{exampleblock}
-\end{frame}
-
-\begin{frame}
-\frametitle{Live démo}
-\begin{center}
-\includegraphics[scale=0.21]{live.png}
-\end{center}
-\end{frame}
-
-\begin{frame}
-\begin{center}
-\includegraphics[scale=1]{chaton.png}
-\end{center}
-\begin{center}
-Merci pour votre attention!
-\end{center}
-
+  \begin{center}
+    \includegraphics[scale=1]{chaton.png}
+  \end{center}
+  \begin{center}
+    Merci pour votre attention!
+  \end{center}
 \end{frame}
 
 \end{document}

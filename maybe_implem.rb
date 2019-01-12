@@ -46,3 +46,48 @@ def fmap(f)
   end
 end
 
+
+f = ->(x) {Just.(x+2)}
+g = ->(x) {Just.(x*x)}
+
+def join(bbox)
+  case bbox
+  when Nothing
+    Nothing.()
+  when Just
+    bbox.from_maybe
+  end
+end
+
+def bind(f, g)
+  ->(x) do
+    join (fmap g).(f.(x))
+  end
+end
+
+id = ->(x) { x }
+
+
+
+
+
+### listes
+powers = ->(n) do
+  [n, n*n, n*n*n]
+end
+
+neighbors = ->(n) do
+  [n-1, n+1]
+end
+
+def fmap(f)
+  ->(list) { list.map(f) }
+end
+
+def join(llist)
+  llist.flatten(1)
+end
+
+def bind(f, g)
+  ->(x) { f.(x).map(&g).flatten }
+end
