@@ -59,7 +59,7 @@ def join(bbox)
   end
 end
 
-def bind(f, g)
+def rfish(f, g)
   ->(x) do
     join (fmap g).(f.(x))
   end
@@ -67,6 +67,9 @@ end
 
 id = ->(x) { x }
 
+def bind(f, v)
+  join (fmap f).(v)
+end
 
 
 
@@ -81,13 +84,28 @@ neighbors = ->(n) do
 end
 
 def fmap(f)
-  ->(list) { list.map(f) }
+  ->(list) { list.map(&f) }
 end
 
 def join(llist)
   llist.flatten(1)
 end
 
-def bind(f, g)
+def rfish(f, g)
   ->(x) { f.(x).map(&g).flatten }
 end
+
+def bind(f, v)
+  v.map(&f).flatten(1)
+end
+
+
+# Member bind:
+class Array
+  def bind(&f)
+    return self.map(&f).flatten(1)
+  end
+end
+
+# Examples:
+bind(powers, bind(powers, [2]))

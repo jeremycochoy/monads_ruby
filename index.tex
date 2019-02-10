@@ -474,14 +474,14 @@ Une fonction de type \emph{Int -> Maybe Int}.
 \end{frame}
 
 \begin{frame}
-\frametitle{Composer des traitements avec échec}
+\frametitle{Chainer des traitements avec échec}
 \begin{block}{}
 Comment composer \verb!f :: a -> M b! et \verb!g :: b -> M c! ?
 \end{block}
 \pause
 \begin{block}{}
-Si $M$ est un foncteur, on peut composer
-\verb!f :: a -> M b! avec \verb!fmap g :: M b -> M (M c)!.
+Si $M$ est un foncteur, on peut chainer un appel à
+\verb!f :: a -> M b! avec un appel à \verb!fmap g :: M b -> M (M c)!.
 \end{block}
 \pause
 \begin{block}{}
@@ -552,27 +552,25 @@ end
 \end{frame}
 
 \begin{frame}[fragile]
-\frametitle{L'opérateur \emph{rfish}}
-\begin{block}{On cherche à définir la composition.}
-\verb!rfish :: (a -> M b) -> (b -> M c) -> (a -> M c)!
+\frametitle{L'opérateur \emph{join}}
+\begin{block}{On cherche à chainer nos traitements.}
+\verb!bind :: M a -> (a -> M b) -> M b!
 \end{block}
 
 \pause
 
 \begin{block}{Nous avons :}
 \begin{itemize}
-\item \verb!(fmap g) o f :: a -> M (M c)!
-\item \verb!join :: M (M a) -> M a!
+\item \verb!(fmap f) :: M a -> M (M b)!
+\item \verb!join :: M (M b) -> M b!
 \end{itemize}
 \end{block}
 \pause
 
-\begin{block}{On peut maintenant composer $f$ et $g$.}
+\begin{block}{On peut maintenant chainer $f$ et $g$.}
 \begin{lstlisting}[language=ruby]
-def rfish(f, g)
-  ->(x) do
-    join (fmap g).(f.(x))
-  end
+def bind(f, v)
+  join ((fmap f).(v))
 end
 \end{lstlisting}
 \end{block}
@@ -664,7 +662,7 @@ T(X) \ar[r]_{T(f)} & T(Y) \\
 \begin{frame}
 \frametitle{A chaque loi son diagramme}
 \begin{alertblock}{\verb!join! est une T.N.}
-\verb!join . fmap (fmap f) $\equiv$ (fmap f) . join!
+\verb!join o fmap (fmap f) $\equiv$ (fmap f) o join!
 \end{alertblock}
 
 \begin{block}{}
@@ -682,7 +680,7 @@ T(X) \ar[r]_{T(f)} & T(Y) \\
 \begin{frame}
 \frametitle{A chaque loi son diagramme}
 \begin{alertblock}{Associativité}
-\verb!join . fmap join   $\equiv$ join . join!
+\verb!join o fmap join $\equiv$ join o join!
 \end{alertblock}
 
 \begin{block}{}
@@ -706,7 +704,7 @@ $\mu \circ T\mu = \mu \circ \mu_T$
 \begin{frame}
 \frametitle{A chaque loi son diagramme}
 \begin{alertblock}{Existence d'un neutre}
-\verb!join . fmap pure   $\equiv$ join . pure = id!
+\verb!join o fmap pure $\equiv$ join o pure = id!
 \end{alertblock}
 
 \begin{block}{}
@@ -783,7 +781,7 @@ end
   \frametitle{Implémentation de fmap}
   \begin{exampleblock}{C'est tout simplement \verb!Array\#map!}
     \begin{center}
-      $[1, 2, 3] {\xrightarrow{\text{fmap f}}} [f(1), f(2), f(3)]$
+      $[1, 2, 3] {\xrightarrow{\text{.map(f)}}} [f(1), f(2), f(3)]$
     \end{center}
   \end{exampleblock}
   \medskip
@@ -797,21 +795,28 @@ end
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{Join et RFish}
+  \frametitle{Join}
   \begin{center}
     \includegraphics[scale=0.2]{flatten}
   \end{center}
-  \begin{block}{\verb!join!}
-    \begin{lstlisting}[language=ruby]
+  \begin{block}{\verb!join!}\begin{lstlisting}[language=ruby]
 def join(llist)
   llist.flatten(1)
 end
     \end{lstlisting}  
   \end{block}
-  \begin{block}{\verb!rfish!}
-    \begin{lstlisting}[language=ruby]
-def rfish(f, g)
-  ->(x) { f.(x).map(&g).flatten }
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Monkey patch pour bind}
+  \begin{center}
+    \includegraphics[scale=0.2]{flatten}
+  \end{center}
+  \begin{block}{\verb!bind!}\begin{lstlisting}[language=ruby]
+class Array
+  def bind(&f)
+    return self.map(&f).flatten(1)
+  end
 end
     \end{lstlisting}  
   \end{block}
@@ -821,13 +826,13 @@ end
   \frametitle{Monade de listes}
   \begin{exampleblock}{Example d'utilisation}
     \begin{lstlisting}[language=ruby]
-irb> rfish(neighbors, neighbors).(42)
+irb> [42].bind(&neighbors).bind(&neighbors)
 => [40, 42, 42, 44]
-irb> rfish(powers, powers).(2)
+irb> [2].bind(&powers).bind(&powers)
 => [2, 4, 8, 4, 16, 64, 8, 64, 512]
-irb> rfish(neighbors, powers).(42)
+irb> [42].bind(&neighbors).bind(&powers)
 => [41, 1681, 68921, 43, 1849, 79507]
-irb> rfish(->(x) { [x, -x] }, neighbors).(42)
+irb>[42].bind { |x| [x, -x] }.bind(&neighbors)
 => [41, 43, -43, -41]
     \end{lstlisting}
   \end{exampleblock}
@@ -877,7 +882,7 @@ some_computation(42)&.get_value("bidirectional")
   \end{column}
   \begin{column}{0.5\textwidth}
     \begin{itemize}
-      \item Left/Right Fish and Bind
+      \item Left/Right Fish et Bind
       \item List comprehension
       \item Monades transformeurs
       \item Comonades et zippers
