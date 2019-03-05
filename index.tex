@@ -27,7 +27,7 @@
 
 \begin{document}
 
-\title{Foncteurs, Monades et Zippers}
+\title{Foncteurs et Monades}
 \author{Jérémy Cochoy}
 \institute{Paris RB}
 \date{Février 2018}
@@ -38,6 +38,41 @@
 \begin{center}
 \includegraphics[scale=0.2]{ruby}
 \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Programming Style}
+\begin{block}{Impératif}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+first_names = []
+for user in users do
+  first_names << user.name
+end
+\end{lstlisting}
+\end{block}
+\begin{block}{Fonctionnel}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+first_names = users.map(&:name)
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Programming Style}
+\begin{block}{Impératif}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+nodes = [root]
+for node in nodes do
+  node.value = node.value.to_json
+  nodes += node.children
+end
+\end{lstlisting}
+\end{block}
+\begin{block}{Fonctionnel}
+\begin{lstlisting}[language=ruby,basicstyle=\ttfamily,keywordstyle=\color{red}]
+root.map!(&:to_json)
+\end{lstlisting}
+\end{block}
 \end{frame}
 
 \begin{frame}
@@ -59,7 +94,8 @@
 
 \end{frame}
 
-\section{Foncteurs applicatifs}
+
+\section{Foncteurs}
 
 \subsection{Fonctions}
 \begin{frame}[fragile]
@@ -178,10 +214,6 @@ end
 \item sum.curry :: a -> b -> c
 \end{itemize}
 \end{block}
-\pause
-\begin{block}{Exercice}
-compose :: (a -> b) -> (b -> c) -> (a -> c)
-\end{block}
 \end{frame}
 
 \subsection{Foncteurs}
@@ -286,8 +318,7 @@ class Maybe
   def initialize(content)
     @content = content
   end
-  def from_maybe(default_value)
-    return default_value if @content.empty?
+  def from_maybe
     @content.first
   end
 end
@@ -455,6 +486,7 @@ L'exemple de Maybe : \verb!Nothing!
 \begin{block}{D'autres types}
 	\begin{itemize}
 		\item Maybe =  Nothing | Just a
+		\item List =  Cons a (List a) | Empty
 		\item Tree = Leaf | Node a (Tree a) (Tree a)
 		\item Either = Left a | Right b
 	\end{itemize}
@@ -572,6 +604,19 @@ end
 def bind(f, v)
   join ((fmap f).(v))
 end
+\end{lstlisting}
+\end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{L'opérateur \emph{join}}
+
+\begin{block}{On peut maintenant chainer $f$ et $g$.}
+\begin{lstlisting}[language=ruby]
+Just.("http://api.com")
+   `bind` query_http
+   `bind` parse_string
+   `bind` json_to_model
 \end{lstlisting}
 \end{block}
 \end{frame}
@@ -882,6 +927,7 @@ some_computation(42)&.get_value("bidirectional")
   \end{column}
   \begin{column}{0.5\textwidth}
     \begin{itemize}
+      \item Foncteurs applicatifs
       \item Left/Right Fish et Bind
       \item List comprehension
       \item Monades transformeurs
@@ -910,7 +956,12 @@ some_computation(42)&.get_value("bidirectional")
          \verb!http://techgate.fr!
       \end{center}
       \end{block}
-      \begin{block}{Backend Developper}
+      \begin{block}{Co-Founder}
+        \begin{center}
+          Symphonia
+        \end{center}
+      \end{block}
+      \begin{block}{Auparavant: Backend Developper}
         \begin{center}
           \includegraphics[scale=0.4]{klaxit}
         \end{center}
